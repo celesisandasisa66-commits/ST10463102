@@ -1,0 +1,249 @@
+package com.mycompany.userauthsystem;
+
+import org.junit.jupiter.api.Test;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
+ */
+package com.mycompany.consolesystem;
+
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class UserAuthSystemTest {
+import java.io.File;
+
+/**
+ *
+ * @author Yolanda
+ */
+public class ConsoleSystemTest {
+
+    public ConsoleSystemTest() {
+    }
+
+    @BeforeAll
+    public static void setUpClass() {
+        System.out.println("Starting ConsoleSystem Tests...");
+    }
+
+    @AfterAll
+    public static void tearDownClass() {
+        System.out.println("Finished ConsoleSystem Tests...");
+    }
+
+    @BeforeEach
+    public void setUp() {
+
+        // Clear all stored data before each test
+        ConsoleSystem.ids.clear();
+        ConsoleSystem.messages.clear();
+        ConsoleSystem.recipients.clear();
+        ConsoleSystem.timestamps.clear();
+        ConsoleSystem.hashes.clear();
+        ConsoleSystem.statusList.clear();
+
+        ConsoleSystem.sentCount = 0;
+    }
+
+    @AfterEach
+    public void tearDown() {
+    }
+
+    /**
+     * Test of checkUserName method, of class ConsoleSystem.
+     */
+    @Test
+    public void testCheckUserName_Valid() {
+
+        String u = "ab_cd";
+
+        boolean result = ConsoleSystem.checkUserName(u);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testCheckUserName_Invalid() {
+
+        String u = "abcdef";
+
+        boolean result = ConsoleSystem.checkUserName(u);
+
+        assertFalse(result);
+    }
+
+    /**
+     * Test of checkPassword method, of class ConsoleSystem.
+     */
+    @Test
+    public void testCheckPassword_Valid() {
+
+        String p = "Password1!";
+
+        boolean result = ConsoleSystem.checkPassword(p);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testCheckPassword_Invalid() {
+
+        String p = "pass";
+
+        boolean result = ConsoleSystem.checkPassword(p);
+
+        assertFalse(result);
+    }
+
+    /**
+     * Test of login method, of class ConsoleSystem.
+     */
+    @Test
+    public void testLogin_Success() {
+
+        String u = "ab_cd";
+        String p = "Password1!";
+
+        boolean result = ConsoleSystem.login(u, p, u, p);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testLogin_Fail() {
+
+        boolean result = ConsoleSystem.login(
+                "user",
+                "pass",
+                "admin",
+                "Password1!"
+        );
+
+        assertFalse(result);
+    }
+
+    /**
+     * Test of validateNumber method, of class ConsoleSystem.
+     */
+    @Test
+    public void testValidateNumber_Valid() {
+
+        String num = "+27123456789";
+
+        String result = ConsoleSystem.validateNumber(num);
+
+        assertEquals("Valid", result);
+    }
+
+    @Test
+    public void testCheckUserName() {
+        assertTrue(UserAuthSystem.checkUserName("user_"));   // valid
+        assertFalse(UserAuthSystem.checkUserName("user"));   // missing _
+        assertFalse(UserAuthSystem.checkUserName("longusername")); // too long
+    public void testValidateNumber_InvalidPrefix() {
+
+        String num = "0712345678";
+
+        String result = ConsoleSystem.validateNumber(num);
+
+        assertEquals("Invalid: must start with +27", result);
+    }
+
+    @Test
+    public void testCheckPasswordComplexity() {
+        assertTrue(UserAuthSystem.checkPasswordComplexity("Passw0rd!")); // valid
+        assertFalse(UserAuthSystem.checkPasswordComplexity("password")); // no capital, number, special
+        assertFalse(UserAuthSystem.checkPasswordComplexity("Password")); // no number, special
+        assertFalse(UserAuthSystem.checkPasswordComplexity("Pass1234")); // no special char
+    public void testValidateNumber_InvalidLength() {
+
+        String num = "+27123";
+
+        String result = ConsoleSystem.validateNumber(num);
+
+        assertEquals("Invalid: must be 12 digits (+27XXXXXXXXX)", result);
+    }
+
+    /**
+     * Test of createMessageHash method, of class ConsoleSystem.
+     */
+    @Test
+    public void testCheckCellPhoneNumber() {
+        assertTrue(UserAuthSystem.checkCellPhoneNumber("+27123456789")); // valid
+        assertFalse(UserAuthSystem.checkCellPhoneNumber("0123456789"));  // missing +27
+        assertFalse(UserAuthSystem.checkCellPhoneNumber("+2712345678")); // too short
+    public void testCreateMessageHash() {
+
+        String id = "1234567890";
+        int num = 1;
+        String msg = "Hello World";
+
+        String expResult = "12:1:HELLOWORLD";
+
+        String result = ConsoleSystem.createMessageHash(id, num, msg);
+
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of storeMessage method, of class ConsoleSystem.
+     */
+    @Test
+    public void testRegisterUser() {
+        assertEquals("Username and password successfully captured. User registered!",
+                UserAuthSystem.registerUser("user_", "Passw0rd!"));
+    public void testStoreMessage() {
+
+        // Add sample message data
+        ConsoleSystem.ids.add("1234567890");
+        ConsoleSystem.hashes.add("12:1:HELLOWORLD");
+        ConsoleSystem.recipients.add("+27123456789");
+        ConsoleSystem.messages.add("Hello World");
+        ConsoleSystem.timestamps.add("10:00:00");
+        ConsoleSystem.statusList.add("SENT");
+
+        assertEquals("Username is not correct. Must have _ and max 5 chars.",
+                UserAuthSystem.registerUser("user", "Passw0rd!"));
+        ConsoleSystem.storeMessage();
+
+        assertEquals("Password is not correct. Must have 8+ chars, capital letter, number, and special char.",
+                UserAuthSystem.registerUser("user_", "password"));
+        File file = new File("messages.json");
+
+        assertTrue(file.exists());
+    }
+
+    /**
+     * Test of showMessages method, of class ConsoleSystem.
+     */
+    @Test
+    public void testLoginUser() {
+        String storedUsername = "user_";
+        String storedPassword = "Passw0rd!";
+    public void testShowMessages() {
+
+        assertTrue(UserAuthSystem.loginUser("user_", "Passw0rd!", storedUsername, storedPassword));
+        assertFalse(UserAuthSystem.loginUser("wrong", "Passw0rd!", storedUsername, storedPassword));
+        assertFalse(UserAuthSystem.loginUser("user_", "wrong", storedUsername, storedPassword));
+        assertDoesNotThrow(() -> {
+            ConsoleSystem.showMessages();
+        });
+    }
+
+    /**
+     * Basic test of main method.
+     * NOTE:
+     * We do NOT run main() directly because it requires user input.
+     */
+    @Test
+    public void testReturnLoginStatus() {
+        assertEquals("Login successful! Welcome back!", UserAuthSystem.returnLoginStatus(true));
+        assertEquals("Username or password incorrect, please try again.", UserAuthSystem.returnLoginStatus(false));
+    public void testMain() {
+
+        assertNotNull(ConsoleSystem.input);
+    }
+}
+}
+  
